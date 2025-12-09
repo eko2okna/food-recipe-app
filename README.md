@@ -1,6 +1,6 @@
 # Food Recipe App
 [![Ask Deepwiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/eko2okna/food-recipe-app)
-![GitHub last commit](https://img.shields.io/github/last-commit/eko2okna/food-recipe-app) ![GitHub License](https://img.shields.io/github/license/eko2okna/food-recipe-app) ![GitHub repo size](https://img.shields.io/github/repo-size/eko2okna/food-recipe-app) ![GitHub Repo stars](https://img.shields.io/github/stars/eko2okna/food-recipe-app) 
+![GitHub last commit](https://img.shields.io/github/last-commit/eko2okna/food-recipe-app) ![GitHub repo size](https://img.shields.io/github/repo-size/eko2okna/food-recipe-app) ![GitHub Repo stars](https://img.shields.io/github/stars/eko2okna/food-recipe-app) 
 
 
 A full-stack web application designed for users to share, discover, and rate food recipes. It features a simple, clean interface for browsing recipes, a user authentication system, and a dedicated admin panel for user management. The entire application is containerized using Docker for easy setup and deployment.

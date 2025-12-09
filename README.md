@@ -1,5 +1,5 @@
 # Food Recipe App
-[![Ask DeepWiki](https://devin.ai/assets/askdeepwiki.png)](https://deepwiki.com/eko2okna/food-recipe-app)
+[![Ask Deepwiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/eko2okna/food-recipe-app)
 
 A full-stack web application designed for users to share, discover, and rate food recipes. It features a simple, clean interface for browsing recipes, a user authentication system, and a dedicated admin panel for user management. The entire application is containerized using Docker for easy setup and deployment.
 

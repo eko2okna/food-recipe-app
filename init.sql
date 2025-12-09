@@ -27,4 +27,3 @@ CREATE TABLE IF NOT EXISTS ratings (
 );
  
 -- Seed users (paste from password generator located in /backend/gen-hash.js)
-

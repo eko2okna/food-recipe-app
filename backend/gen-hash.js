@@ -1,4 +1,5 @@
-import bcrypt from 'bcrypt';
+// Use bcryptjs to avoid native binary compatibility issues across platforms
+import bcrypt from 'bcryptjs';
 
 async function generateHashes() {
   const hash1 = await bcrypt.hash('password', 10);

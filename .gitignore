@@ -1,0 +1,12 @@
+# Node / frontend
+node_modules/
+*.log
+
+# Environment files
+backend/.env
+
+# Uploads
+backend/uploads/
+
+# Docker artifacts
+*.pid

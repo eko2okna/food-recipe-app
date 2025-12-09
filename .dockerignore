@@ -1,0 +1,14 @@
+node_modules/
+**/node_modules/
+**/*.log
+.git/
+.gitignore
+.vscode/
+
+# Environment and uploads
+backend/.env
+backend/uploads/
+
+# Local build artifacts
+dist/
+build/

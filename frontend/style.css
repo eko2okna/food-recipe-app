@@ -1,0 +1,228 @@
+/* frontend/style.css */
+.instrument-serif-regular {
+  font-family: "Instrument Serif", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.teachers-yay {
+  font-family: "Teachers", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+}
+
+body {
+  padding: 1rem;
+  max-width: 600px;
+  margin: auto;
+  color: black;
+  background-color: #fffef9;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header h1 {
+  font-size: 2rem;
+}
+header button {
+  color: black;
+  background-color: #fdfaee;
+  border: 1px solid black;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  width: 30% ;
+  cursor: pointer;
+}
+
+#addBtn {
+  color: black;
+  background-color: #7a918d;
+  border: 1px solid black;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  width: 100%;
+  cursor: pointer;
+}
+
+#filterButtons {
+  width: 100%;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+}
+.filter-btn {
+  color: black;
+  background-color: #5f736f;
+  width: 24%;
+  border: 1px solid black;
+  border-radius: 8px;
+  margin-top: 0.1rem;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+.filter-btn:hover {
+  transform: translateY(-1px);
+}
+.filter-btn.active {
+  background-color: #7e63ba;
+  border-color: #a894d4;
+  color: #fff;
+}
+
+#mealList .meal {
+  border: 1px solid black;
+  border-radius: 8px;
+  padding: 0.5rem;
+  margin: 1rem 0;
+  background: #fdfaee;
+}
+.meal-ratings {
+  display: flex;
+  flex-direction: row;
+}
+
+.recipe-header {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+}
+.recipe-header h3 {
+  margin-top: 0.1rem;
+  font-weight: bold;
+  font-size: 1.5rem;
+  overflow: auto;
+}
+.recipe-author {
+  color: #667366;
+  font-size: 0.8rem;
+  margin-bottom: 0.1rem;
+}
+#thumbnail {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+  display: block;
+}
+
+.ratings-and-buttons {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-left: 0.5rem;
+}
+.ratings-and-buttons button {
+  color: black;
+  background-color: #fdfaee;
+  border: 1px solid black;
+  border-radius: 8px;
+  width: 48%;
+  text-align: center;
+  cursor:pointer;
+}
+.buttons-edit-delete {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+#edit{
+  margin-right: 0;;
+  color: black;
+  background-color: #cdc7b1;
+  cursor: pointer;
+  width: 48%;
+}
+#delete{
+  margin-left: 0;
+  color: black;
+  background-color: #a18276;
+  cursor: pointer;
+  width: 48%;
+}
+
+#ratings {
+  width: 100%;
+  display: block;
+  margin-top: 4rem;
+}
+#ratings select {
+  width: 100%;
+  height: 40px;
+  border-radius: 8px;
+}
+#ratings button {
+  color: black;
+  background-color: #aac0aa;
+  border: 1px solid black;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  width: 100%;
+  height: 30px;
+  cursor:pointer;
+}
+
+.average-rating {
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-bottom: 0.1rem;
+}
+.average-rating-value {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-top: 0.1rem;
+  margin-bottom: 0.1rem;
+}
+.star{
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  vertical-align: -0.1em;
+  object-fit: contain;
+}
+.number-average-rating {
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-top: 0.1rem;
+}
+
+.recipe {
+  margin-top: 1rem;
+  text-align: left;
+  white-space: pre-wrap;
+  /* new */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.recipe.expanded {
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+.toggle-recipe {
+  font-size: small;
+  font-weight: initial;
+  margin: 0.2rem 0;
+  padding: 0.2rem;
+  width: 10%;
+  background-color: transparent;
+  border: none;
+  text-decoration: underline;
+}
+
+form textarea {
+  width: 100%;
+  height: 80px;
+}
+
+input, textarea, button {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}

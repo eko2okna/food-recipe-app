@@ -1,0 +1,277 @@
+<!-- frontend/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Recipes</title>
+  <link type="image/png" sizes="32x32" rel="icon" href="/ikona32.png">
+  <link type="image/png" sizes="96x96" rel="icon" href="/ikona96.png">
+  <link rel="apple-touch-icon" type="image.png" sizes="76x76" href="/ikona76.png">
+  <link rel="stylesheet" href="style.css?v=2025120706">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Almendra+SC&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
+</head>
+<body class="teachers-yay">
+  <header>
+    <h1 class="instrument-serif-regular">OUR RECIPES 🍽️</h1>
+    <button onclick="logout()" id="logout" class="teachers-yay">Logout</button>
+  </header>
+  <main>
+    <button id="addBtn" class="teachers-yay">Add Dish</button>
+    <form id="addForm" enctype="multipart/form-data" style="display:none">
+      <input type="text" name="title" placeholder="Title" required><br>
+      Type: <select name="type" required>
+        <option value="breakfast">Breakfast</option>
+        <option value="dinner">Dinner</option>
+        <option value="bakes">Bakes</option>
+      </select><br>
+      <textarea name="recipe" maxlength="4000" placeholder="Recipe"></textarea><br>
+      <input type="file" name="image" accept="image/*"><p>(please upload vertical photos)</p><br>
+      <button type="submit">Add</button>
+    </form>
+    <div id="filterButtons">
+        <button class="filter-btn" data-type="all">All</button>
+        <button class="filter-btn" data-type="breakfast">Breakfast</button>
+        <button class="filter-btn" data-type="dinner">Dinner</button>
+        <button class="filter-btn" data-type="bakes">Bakes</button>
+    </div>
+    <div id="mealList"></div>
+  </main>
+  <script>
+    const token = localStorage.getItem('token');
+    if (!token) location.href = '/login.html';
+
+    const mealList = document.getElementById('mealList');
+    const addForm = document.getElementById('addForm');
+
+    document.getElementById('addBtn').onclick = () => {
+      addForm.style.display = addForm.style.display === 'none' ? 'block' : 'none';
+    };
+
+    addForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const formData = new FormData(addForm);
+
+      const res = await fetch('/api/meals', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + token },
+        body: formData
+      });
+
+      if (res.ok) {
+        // Hide form after adding
+        addForm.style.display = 'none';
+        // Clear form fields
+        addForm.reset();
+        // Refresh meals list to show the new dish
+        fetchMeals();
+      } else {
+        const err = await res.json();
+        alert('Add failed: ' + (err.message || 'Something went wrong'));
+      }
+    };
+
+    let currentFilter='all'; // default: all
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.onclick = () => {
+            currentFilter = btn.dataset.type;
+            fetchMeals();
+
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        };
+    });
+
+
+    
+
+    async function fetchMeals() {
+      const res = await fetch('/api/meals', {
+        headers: { Authorization: 'Bearer ' + token }
+      });
+      const data = await res.json();
+      mealList.innerHTML = '';
+
+      const filteredData = currentFilter === 'all' ? data : data.filter(d => d.type === currentFilter);
+
+      // Decode current username from JWT payload (unverified, display-only)
+      let currentUsername = null;
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        currentUsername = payload?.username || null;
+      } catch {}
+
+      filteredData.forEach(dish => {
+        const div = document.createElement('div');
+        const imageUrl = `/${dish.image_path}`;
+        div.className = 'meal';
+        const canEdit = currentUsername && dish.author_username && currentUsername === dish.author_username;
+        div.innerHTML = `
+          <div class="meal-ratings">
+            <div class="recipe-header">
+              <p class="recipe-author"><em>Added by: ${dish.author_username || 'unknown'}</em></p>
+              <h3>${dish.title}</h3>
+              <img src="${imageUrl}" alt="thumbnail" id="thumbnail"/>
+            </div>
+            <div class="ratings-and-buttons">
+              <div class="buttons-edit-delete">
+                <button onclick="showEditForm(${dish.id})" id="edit" class="teachers-yay" style="${canEdit ? '' : 'display:none'}">Edit</button>
+                <button onclick="confirmDelete(${dish.id})" id="delete" class="teachers-yay" style="${canEdit ? '' : 'display:none'}">Delete</button>
+              </div>
+              <div id="ratings">
+                <select id="rate-${dish.id}">
+                  <option value="">-- Select rating --</option>
+                  ${[...Array(10)].map((_, i) => {
+                    const val = i + 1;
+                    return `<option value="${val}">${val}</option>`;
+                  }).join('')}
+                </select>
+                <button onclick="rate(${dish.id})" id="rate" class="teachers-yay">Rate</button>
+                <p class="average-rating"><strong>Average rating:</strong></p>
+                <p class="average-rating-value">${dish.average_rating !== null ? Number(dish.average_rating).toFixed(2) : '-'}<img src="star.png" alt="star" class="star"></p>
+                <p class="number-average-rating">based on ${Array.isArray(dish.ratings) ? dish.ratings.length : 0} ratings</p>
+              </div>
+            </div>
+          </div>
+          <div class="recipe-container">
+            <p class="recipe" id="recipe-${dish.id}">${dish.recipe}</p>
+            <button class="toggle-recipe" data-target="recipe-${dish.id}">Expand</button>
+          </div>
+
+          <form id="editForm-${dish.id}" style="display:${canEdit ? 'none' : 'none'}" enctype="multipart/form-data">
+            <input type="text" name="title" value="${dish.title}" required><br>
+            <select name="type" required>
+              <option>-- Select dish type --</option>
+              <option value="breakfast" ${dish.type==='breakfast'?'selected':''}>Breakfast</option>
+              <option value="dinner" ${dish.type==='dinner'?'selected':''}>Dinner</option>
+              <option value="bakes" ${dish.type==='bakes'?'selected':''}>Bakes</option>
+            </select><br>
+            <textarea name="recipe" maxlength="4000" required>${dish.recipe}</textarea><br>
+            <input type="file" name="image" accept="image/*"><br>
+            <button type="submit">Save</button>
+            <button type="button" onclick="hideEditForm(${dish.id})">Cancel</button>
+          </form>
+        `;
+
+        mealList.appendChild(div);
+      });
+
+      document.querySelectorAll('.toggle-recipe').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetId = btn.dataset.target;
+            const p = document.getElementById(targetId);
+            p.classList.toggle('expanded');
+
+            btn.textContent = p.classList.contains('expanded') ? 'Collapse' : 'Expand';
+        });
+      });
+    }
+    function showEditForm(id) {
+  document.getElementById(`editForm-${id}`).style.display = 'block';
+}
+
+function hideEditForm(id) {
+  document.getElementById(`editForm-${id}`).style.display = 'none';
+}
+
+// Handle edit form submission
+document.addEventListener('submit', async (e) => {
+  if (e.target && e.target.id.startsWith('editForm-')) {
+    e.preventDefault();
+    const form = e.target;
+    const id = form.id.split('-')[1];
+    const formData = new FormData(form);
+
+    const res = await fetch(`/api/meals/${id}`, {
+      method: 'PUT',
+      headers: { Authorization: 'Bearer ' + token },
+      body: formData
+    });
+
+    if (res.ok) {
+      alert('Dish updated');
+      hideEditForm(id);
+      fetchMeals();
+    } else {
+      const err = await res.json();
+      alert('Error: ' + (err.message || 'Failed to update'));
+    }
+  }
+});
+
+function confirmDelete(id) {
+  if (confirm('Are you sure you want to delete this dish?')) {
+    deleteMeal(id);
+  }
+}
+
+async function deleteMeal(id) {
+  const res = await fetch(`/api/meals/${id}`, {
+    method: 'DELETE',
+    headers: { Authorization: 'Bearer ' + token }
+  });
+  if (res.ok) {
+    alert('Dish deleted');
+    fetchMeals();
+  } else {
+    const err = await res.json();
+    alert('Error: ' + (err.message || 'Failed to delete'));
+  }
+}
+
+
+    async function rate(dish_id) {
+  const select = document.getElementById('rate-' + dish_id);
+  const ratingStr = select.value;
+
+  if (!ratingStr) {
+    alert('Choose a rating!');
+    return;
+  }
+
+  const rating = Number(ratingStr);
+
+  if (!Number.isInteger(rating) || rating < 1 || rating > 10) {
+    alert('Rating must be an integer from 1 to 10');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/ratings', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      },
+      body: JSON.stringify({ dish_id, rating })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      alert('Error: ' + (err.error || err.message || 'Failed to save rating'));
+      return;
+    }
+
+    // After rating is saved, refresh the meals list to update ratings
+    fetchMeals();
+
+  } catch (error) {
+    alert('Network or server error');
+    console.error(error);
+  }
+}
+
+
+    function logout() {
+      localStorage.removeItem('token');
+      location.href = '/login.html';
+    }
+
+    fetchMeals();
+  </script>
+</body>
+</html>
